@@ -1,0 +1,364 @@
+title: "웹 개발 기초 - HTML, CSS, JavaScript"
+description: "현대 웹 개발의 기초인 HTML, CSS, JavaScript를 배우는 강의입니다."
+author: "웹 개발 강사"
+created_at: "2024-01-20"
+tags:
+  - "웹개발"
+  - "HTML"
+  - "CSS"
+  - "JavaScript"
+  - "프론트엔드"
+
+slides:
+  - title: "웹 개발 기초 강의"
+    content: |
+      # 웹 개발의 세계에 오신 것을 환영합니다! 🌐
+      
+      ## 강의 목표
+      - HTML의 기본 구조와 태그 이해
+      - CSS를 이용한 스타일링 기법
+      - JavaScript 기본 문법과 DOM 조작
+      - 반응형 웹 디자인 개념
+      
+      ## 학습 순서
+      1. **HTML** - 웹 페이지의 뼈대
+      2. **CSS** - 웹 페이지의 옷
+      3. **JavaScript** - 웹 페이지의 두뇌
+      4. **실습** - 간단한 웹 페이지 만들기
+    note: "이 강의는 웹 개발을 처음 시작하는 분들을 위한 기초 강의입니다."
+
+  - title: "HTML 기초"
+    content: |
+      ## HTML이란?
+      **HyperText Markup Language** - 웹 페이지의 구조를 만드는 마크업 언어
+      
+      ## 기본 구조
+      ```html
+      <!DOCTYPE html>
+      <html lang="ko">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>페이지 제목</title>
+      </head>
+      <body>
+          <h1>안녕하세요!</h1>
+          <p>첫 번째 웹 페이지입니다.</p>
+      </body>
+      </html>
+      ```
+      
+      ## 주요 태그들
+      - `<h1>~<h6>`: 제목 태그
+      - `<p>`: 단락 태그
+      - `<a>`: 링크 태그
+      - `<img>`: 이미지 태그
+      - `<div>`, `<span>`: 컨테이너 태그
+    note: "HTML은 콘텐츠의 의미와 구조를 정의하는 것이 중요합니다."
+
+  - title: "CSS 기초"
+    content: |
+      ## CSS란?
+      **Cascading Style Sheets** - 웹 페이지의 스타일을 정의하는 언어
+      
+      ## CSS 적용 방법
+      ```html
+      <!-- 인라인 스타일 -->
+      <p style="color: red; font-size: 16px;">빨간 글씨</p>
+      
+      <!-- 내부 스타일 -->
+      <style>
+          p {
+              color: blue;
+              font-size: 18px;
+          }
+      </style>
+      
+      <!-- 외부 스타일 -->
+      <link rel="stylesheet" href="style.css">
+      ```
+      
+      ## 기본 선택자
+      ```css
+      /* 태그 선택자 */
+      h1 { color: navy; }
+      
+      /* 클래스 선택자 */
+      .highlight { background-color: yellow; }
+      
+      /* ID 선택자 */
+      #header { font-size: 24px; }
+      ```
+    note: "CSS는 선택자와 속성을 이용해 HTML 요소의 스타일을 지정합니다."
+
+  - title: "CSS 레이아웃"
+    content: |
+      ## Flexbox 레이아웃
+      ```css
+      .container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+      }
+      
+      .item {
+          flex: 1;
+          margin: 10px;
+          padding: 20px;
+          background-color: #f0f0f0;
+      }
+      ```
+      
+      ## Grid 레이아웃
+      ```css
+      .grid-container {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+      }
+      
+      .grid-item {
+          background-color: #e0e0e0;
+          padding: 20px;
+          text-align: center;
+      }
+      ```
+      
+      ## 반응형 디자인
+      ```css
+      @media (max-width: 768px) {
+          .container {
+              flex-direction: column;
+          }
+      }
+      ```
+    note: "현대 웹 개발에서는 Flexbox와 Grid가 레이아웃의 핵심입니다."
+
+  - title: "JavaScript 기초"
+    content: |
+      ## JavaScript란?
+      웹 페이지에 **동적인 기능**을 추가하는 프로그래밍 언어
+      
+      ## 기본 문법
+      ```javascript
+      // 변수 선언
+      let name = "홍길동";
+      const age = 25;
+      
+      // 함수 정의
+      function greet(name) {
+          return `안녕하세요, ${name}님!`;
+      }
+      
+      // 함수 호출
+      console.log(greet("김철수"));
+      
+      // 조건문
+      if (age >= 18) {
+          console.log("성인입니다.");
+      } else {
+          console.log("미성년자입니다.");
+      }
+      
+      // 반복문
+      for (let i = 0; i < 5; i++) {
+          console.log(`반복 ${i + 1}`);
+      }
+      ```
+    note: "JavaScript는 브라우저에서 실행되는 클라이언트 사이드 언어입니다."
+
+  - title: "DOM 조작"
+    content: |
+      ## DOM(Document Object Model)
+      HTML 문서의 구조를 객체로 표현한 것
+      
+      ## 요소 선택하기
+      ```javascript
+      // ID로 선택
+      const title = document.getElementById('title');
+      
+      // 클래스로 선택
+      const items = document.getElementsByClassName('item');
+      
+      // CSS 선택자로 선택
+      const button = document.querySelector('.btn');
+      const allButtons = document.querySelectorAll('.btn');
+      ```
+      
+      ## 요소 조작하기
+      ```javascript
+      // 내용 변경
+      title.textContent = '새로운 제목';
+      title.innerHTML = '<strong>강조된 제목</strong>';
+      
+      // 스타일 변경
+      title.style.color = 'red';
+      title.style.fontSize = '24px';
+      
+      // 클래스 조작
+      title.classList.add('highlight');
+      title.classList.remove('old-style');
+      title.classList.toggle('active');
+      ```
+    note: "DOM 조작을 통해 사용자와 상호작용하는 웹 페이지를 만들 수 있습니다."
+
+  - title: "이벤트 처리"
+    content: |
+      ## 이벤트 리스너
+      사용자의 행동(클릭, 키보드 입력 등)에 반응하는 기능
+      
+      ```javascript
+      // 버튼 클릭 이벤트
+      const button = document.querySelector('#myButton');
+      button.addEventListener('click', function() {
+          alert('버튼이 클릭되었습니다!');
+      });
+      
+      // 화살표 함수 사용
+      button.addEventListener('click', () => {
+          console.log('화살표 함수로 처리');
+      });
+      
+      // 폼 제출 이벤트
+      const form = document.querySelector('#myForm');
+      form.addEventListener('submit', function(event) {
+          event.preventDefault(); // 기본 동작 방지
+          const formData = new FormData(form);
+          console.log('폼 데이터:', formData);
+      });
+      
+      // 키보드 이벤트
+      document.addEventListener('keydown', function(event) {
+          if (event.key === 'Enter') {
+              console.log('엔터키가 눌렸습니다!');
+          }
+      });
+      ```
+    note: "이벤트 리스너를 통해 사용자 인터페이스를 구현할 수 있습니다."
+
+  - title: "실습: 간단한 할 일 목록"
+    content: |
+      ## HTML 구조
+      ```html
+      <div class="todo-app">
+          <h1>할 일 목록</h1>
+          <input type="text" id="todoInput" placeholder="새로운 할 일을 입력하세요">
+          <button id="addBtn">추가</button>
+          <ul id="todoList"></ul>
+      </div>
+      ```
+      
+      ## CSS 스타일
+      ```css
+      .todo-app {
+          max-width: 400px;
+          margin: 50px auto;
+          padding: 20px;
+      }
+      
+      #todoInput {
+          width: 70%;
+          padding: 10px;
+          margin-right: 10px;
+      }
+      
+      #addBtn {
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          cursor: pointer;
+      }
+      
+      .todo-item {
+          padding: 10px;
+          margin: 5px 0;
+          background-color: #f8f9fa;
+          border-radius: 5px;
+      }
+      ```
+    note: "실제 동작하는 웹 애플리케이션을 만들어보는 실습입니다."
+
+  - title: "실습: JavaScript 기능 구현"
+    content: |
+      ## JavaScript 코드
+      ```javascript
+      document.addEventListener('DOMContentLoaded', function() {
+          const todoInput = document.getElementById('todoInput');
+          const addBtn = document.getElementById('addBtn');
+          const todoList = document.getElementById('todoList');
+          
+          // 할 일 추가 함수
+          function addTodo() {
+              const todoText = todoInput.value.trim();
+              
+              if (todoText === '') {
+                  alert('할 일을 입력해주세요!');
+                  return;
+              }
+              
+              // 새로운 할 일 항목 생성
+              const li = document.createElement('li');
+              li.className = 'todo-item';
+              li.innerHTML = `
+                  <span>${todoText}</span>
+                  <button onclick="deleteTodo(this)">삭제</button>
+              `;
+              
+              todoList.appendChild(li);
+              todoInput.value = '';
+          }
+          
+          // 할 일 삭제 함수
+          window.deleteTodo = function(button) {
+              const li = button.parentElement;
+              todoList.removeChild(li);
+          }
+          
+          // 이벤트 리스너 등록
+          addBtn.addEventListener('click', addTodo);
+          
+          todoInput.addEventListener('keypress', function(event) {
+              if (event.key === 'Enter') {
+                  addTodo();
+              }
+          });
+      });
+      ```
+    note: "이 코드는 완전히 동작하는 할 일 목록 애플리케이션입니다."
+
+  - title: "마무리 및 다음 단계"
+    content: |
+      # 축하합니다! 🎉
+      
+      ## 오늘 학습한 내용
+      - ✅ HTML 기본 구조와 태그
+      - ✅ CSS 스타일링과 레이아웃
+      - ✅ JavaScript 기본 문법
+      - ✅ DOM 조작과 이벤트 처리
+      - ✅ 실습: 할 일 목록 만들기
+      
+      ## 다음 단계 학습 주제
+      
+      ### 고급 JavaScript
+      - ES6+ 문법 (화살표 함수, 구조 분해 할당)
+      - 비동기 처리 (Promise, async/await)
+      - 모듈 시스템
+      
+      ### 프론트엔드 프레임워크
+      - React, Vue.js, Angular
+      - 상태 관리 라이브러리
+      
+      ### 백엔드 개발
+      - Node.js, Python (Flask/Django)
+      - 데이터베이스 연동
+      - API 개발
+      
+      ## 추천 학습 자료
+      - [MDN Web Docs](https://developer.mozilla.org/)
+      - [W3Schools](https://www.w3schools.com/)
+      - 실제 프로젝트 만들기
+      
+      **계속 코딩하세요! 💻**
+    note: "웹 개발은 지속적인 학습과 실습이 중요합니다. 많은 프로젝트를 만들어보세요!" 

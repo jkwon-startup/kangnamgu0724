@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ slide.title }} - 슬라이드 강의안</title>
+    
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- 커스텀 CSS -->
+    <style>
+        .reveal .slides section {
+            text-align: left;
+        }
+        
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .reveal .slide-title {
+            text-align: center;
+            color: #3498db;
+            margin-bottom: 30px;
+        }
+        
+        .reveal .slide-content {
+            line-height: 1.6;
+        }
+        
+        .reveal .slide-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .reveal .slide-note {
+            background: #f8f9fa;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+        
+        .reveal .slide-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+        
+        .reveal .controls {
+            color: #3498db;
+        }
+        
+        .reveal .progress {
+            color: #3498db;
+        }
+        
+        .slide-navigation {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            padding: 10px 15px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(52, 152, 219, 1);
+        }
+        
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            padding: 10px 15px;
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .fullscreen-btn:hover {
+            background: rgba(46, 204, 113, 1);
+        }
+    </style>
+</head>
+<body>
+    <!-- 네비게이션 버튼 -->
+    <div class="slide-navigation">
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('slides_list') }}'">
+            <i class="fas fa-list"></i> 목록
+        </button>
+        <button class="nav-btn" onclick="window.location.href='{{ url_for('index') }}'">
+            <i class="fas fa-home"></i> 홈
+        </button>
+    </div>
+    
+    <!-- 전체화면 버튼 -->
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">
+        <i class="fas fa-expand"></i> 전체화면
+    </button>
+
+    <!-- Reveal.js 컨테이너 -->
+    <div class="reveal">
+        <div class="slides">
+            {% if slide.slides %}
+                {% for slide_item in slide.slides %}
+                <section>
+                    {% if slide_item.title %}
+                    <h2 class="slide-title">{{ slide_item.title }}</h2>
+                    {% endif %}
+                    
+                    {% if slide_item.content_html %}
+                    <div class="slide-content">
+                        {{ slide_item.content_html | safe }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if slide_item.image %}
+                    <div class="text-center">
+                        <img src="{{ url_for('serve_assets', filename=slide_item.image) }}" 
+                             alt="슬라이드 이미지" class="slide-image">
+                    </div>
+                    {% endif %}
+                    
+                    {% if slide_item.note %}
+                    <div class="slide-note">
+                        <strong>참고:</strong> {{ slide_item.note }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="slide-footer">
+                        {{ slide.title }} | {{ slide.author or '강사' }}
+                    </div>
+                </section>
+                {% endfor %}
+            {% else %}
+            <section>
+                <h2 class="slide-title">{{ slide.title }}</h2>
+                <div class="slide-content">
+                    <p>슬라이드 내용이 없습니다.</p>
+                </div>
+                <div class="slide-footer">
+                    {{ slide.title }} | {{ slide.author or '강사' }}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reveal.js JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    
+    <script>
+        // Reveal.js 초기화
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide',
+            
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+        
+        // 키보드 단축키
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'F11':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+                case 'Escape':
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    break;
+            }
+        });
+        
+        // 전체화면 토글
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // 슬라이드 진행 상태 저장
+        Reveal.on('slidechanged', function(event) {
+            localStorage.setItem('slide-progress-{{ slide.id }}', JSON.stringify({
+                h: event.indexh,
+                v: event.indexv || 0
+            }));
+        });
+        
+        // 이전 진행 상태 복원
+        window.addEventListener('load', function() {
+            const saved = localStorage.getItem('slide-progress-{{ slide.id }}');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                Reveal.slide(progress.h, progress.v);
+            }
+        });
+        
+        // 슬라이드 자동 저장
+        let autoSaveInterval = setInterval(function() {
+            const state = Reveal.getState();
+            localStorage.setItem('slide-autosave-{{ slide.id }}', JSON.stringify(state));
+        }, 30000); // 30초마다 자동 저장
+    </script>
+</body>
+</html> 

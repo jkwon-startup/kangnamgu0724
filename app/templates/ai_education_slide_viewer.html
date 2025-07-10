@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ slide_data.title }} - AI 교육 슬라이드</title>
+    
+    <!-- 기본 스타일 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Reveal.js 스타일 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    
+    <!-- 전용 스타일 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai-education-style.css') }}">
+    
+    <!-- 메타 태그 -->
+    <meta name="description" content="{{ slide_data.description }}">
+    <meta name="author" content="{{ slide_data.author }}">
+    <meta name="keywords" content="AI교육, 환경교육, 생성형AI, 강사교육">
+    
+    <!-- 소셜 미디어 메타 태그 -->
+    <meta property="og:title" content="{{ slide_data.title }}">
+    <meta property="og:description" content="{{ slide_data.description }}">
+    <meta property="og:type" content="presentation">
+    <meta property="og:image" content="{{ url_for('static', filename='images/ai-education-og.jpg') }}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.5rem;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .slide-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
+        
+        .slide-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #43e97b, #38f9d7);
+            transition: width 0.3s ease;
+        }
+        
+        .slide-navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .slide-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+        
+        .keyboard-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .keyboard-help.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .keyboard-help h6 {
+            margin: 0 0 10px 0;
+            color: #43e97b;
+        }
+        
+        .keyboard-help kbd {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+        }
+        
+        /* 반응형 설정 */
+        @media (max-width: 768px) {
+            .slide-navigation {
+                bottom: 10px;
+                padding: 8px 15px;
+            }
+            
+            .nav-btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .slide-info {
+                top: 10px;
+                right: 10px;
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 로딩 스크린 -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div>AI 교육 슬라이드 준비 중...</div>
+    </div>
+    
+    <!-- 슬라이드 진행률 -->
+    <div class="slide-progress">
+        <div class="slide-progress-bar" id="progressBar"></div>
+    </div>
+    
+    <!-- 슬라이드 정보 -->
+    <div class="slide-info" id="slideInfo">
+        <i class="fas fa-presentation"></i>
+        <span id="slideCounter">1 / {{ slide_data.slides|length }}</span>
+    </div>
+    
+    <!-- 키보드 도움말 -->
+    <div class="keyboard-help" id="keyboardHelp">
+        <h6><i class="fas fa-keyboard"></i> 키보드 단축키</h6>
+        <div><kbd>→</kbd> <kbd>↓</kbd> <kbd>Space</kbd> 다음 슬라이드</div>
+        <div><kbd>←</kbd> <kbd>↑</kbd> 이전 슬라이드</div>
+        <div><kbd>F11</kbd> 전체화면</div>
+        <div><kbd>ESC</kbd> 개요 모드</div>
+        <div><kbd>H</kbd> 도움말 토글</div>
+    </div>
+    
+    <!-- 네비게이션 버튼 -->
+    <div class="slide-navigation">
+        <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+        <button class="nav-btn" id="homeBtn"><i class="fas fa-home"></i></button>
+        <button class="nav-btn" id="overviewBtn"><i class="fas fa-th"></i></button>
+        <button class="nav-btn" id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+        <button class="nav-btn" id="helpBtn"><i class="fas fa-question"></i></button>
+        <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    
+    <!-- 메인 프레젠테이션 -->
+    <div class="reveal">
+        <div class="slides">
+            {% for slide in slide_data.slides %}
+            <section 
+                data-animation="{{ slide.background_animation or 'particles' }}"
+                class="{% if slide.type == 'title' %}title-slide{% else %}content-slide{% endif %}"
+                data-background-color="{% if slide.type == 'title' %}transparent{% else %}#ffffff{% endif %}"
+                data-transition="slide"
+                data-transition-speed="default"
+            >
+                {% if slide.type == 'title' %}
+                    <!-- 타이틀 슬라이드 -->
+                    <div class="fade-in-up">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'objectives' %}
+                    <!-- 교육 목표 슬라이드 -->
+                    <div class="fade-in-left">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'agenda' %}
+                    <!-- 교육 과정 개요 슬라이드 -->
+                    <div class="fade-in-right">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type in ['tools-planning', 'tools-slides', 'tools-images', 'tools-video'] %}
+                    <!-- AI 도구 소개 슬라이드 -->
+                    <div class="fade-in-up">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'case-studies' %}
+                    <!-- 실제 사례 슬라이드 -->
+                    <div class="fade-in-left">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'tips-warnings' %}
+                    <!-- 주의사항 및 팁 슬라이드 -->
+                    <div class="fade-in-right">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type in ['qa', 'individual-qa'] %}
+                    <!-- Q&A 슬라이드 -->
+                    <div class="fade-in-up">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'summary' %}
+                    <!-- 요약 슬라이드 -->
+                    <div class="fade-in-left">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type in ['tool-summary-1', 'tool-summary-2', 'tool-summary-3'] %}
+                    <!-- 도구 모음집 슬라이드 -->
+                    <div class="fade-in-right">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% elif slide.type == 'closing' %}
+                    <!-- 마무리 슬라이드 -->
+                    <div class="fade-in-up pulse">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% else %}
+                    <!-- 기본 콘텐츠 슬라이드 -->
+                    <div class="fade-in-up">
+                        {{ slide.content | markdown | safe }}
+                    </div>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- JavaScript 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/markdown/markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/highlight/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/notes/notes.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/plugin/search/search.min.js"></script>
+    
+    <!-- 전용 애니메이션 JavaScript -->
+    <script src="{{ url_for('static', filename='js/ai-education-animations.js') }}"></script>
+    
+    <script>
+        // Reveal.js 초기화
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            
+            // 1920x1080 비율 설정
+            width: 1920,
+            height: 1080,
+            margin: 0.05,
+            minScale: 0.2,
+            maxScale: 2.0,
+            
+            // 플러그인
+            plugins: [
+                RevealMarkdown,
+                RevealHighlight,
+                RevealNotes,
+                RevealSearch
+            ],
+            
+            // 키보드 설정
+            keyboard: {
+                72: function() { // H key
+                    toggleKeyboardHelp();
+                },
+                70: function() { // F key
+                    toggleFullscreen();
+                },
+                27: function() { // ESC key
+                    Reveal.toggleOverview();
+                }
+            }
+        });
+        
+        // 전역 변수
+        let currentSlideIndex = 0;
+        let totalSlides = {{ slide_data.slides|length }};
+        let helpVisible = false;
+        
+        // 슬라이드 변경 이벤트
+        Reveal.addEventListener('slidechanged', function(event) {
+            currentSlideIndex = event.indexh;
+            updateSlideInfo();
+            updateProgress();
+            saveProgress();
+            
+            // 애니메이션 변경
+            const slide = event.currentSlide;
+            const animationType = slide.getAttribute('data-animation') || 'particles';
+            if (typeof setAnimation === 'function') {
+                setAnimation(animationType);
+            }
+        });
+        
+        // 슬라이드 준비 완료 이벤트
+        Reveal.addEventListener('ready', function(event) {
+            hideLoadingScreen();
+            updateSlideInfo();
+            updateProgress();
+            loadProgress();
+            
+            // 첫 번째 슬라이드 애니메이션 설정
+            const slide = event.currentSlide;
+            const animationType = slide.getAttribute('data-animation') || 'particles';
+            if (typeof setAnimation === 'function') {
+                setAnimation(animationType);
+            }
+        });
+        
+        // 로딩 스크린 숨기기
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('hidden');
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        }
+        
+        // 슬라이드 정보 업데이트
+        function updateSlideInfo() {
+            const slideCounter = document.getElementById('slideCounter');
+            slideCounter.textContent = `${currentSlideIndex + 1} / ${totalSlides}`;
+        }
+        
+        // 진행률 업데이트
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progress = ((currentSlideIndex + 1) / totalSlides) * 100;
+            progressBar.style.width = progress + '%';
+        }
+        
+        // 진행률 저장
+        function saveProgress() {
+            const slideId = '{{ slide_data.title }}';
+            localStorage.setItem(`slide_progress_${slideId}`, currentSlideIndex);
+        }
+        
+        // 진행률 불러오기
+        function loadProgress() {
+            const slideId = '{{ slide_data.title }}';
+            const savedProgress = localStorage.getItem(`slide_progress_${slideId}`);
+            if (savedProgress !== null) {
+                const slideIndex = parseInt(savedProgress);
+                if (slideIndex > 0 && slideIndex < totalSlides) {
+                    Reveal.slide(slideIndex);
+                }
+            }
+        }
+        
+        // 키보드 도움말 토글
+        function toggleKeyboardHelp() {
+            const keyboardHelp = document.getElementById('keyboardHelp');
+            helpVisible = !helpVisible;
+            keyboardHelp.classList.toggle('show', helpVisible);
+        }
+        
+        // 전체화면 토글
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // 네비게이션 버튼 이벤트
+        document.getElementById('prevBtn').addEventListener('click', () => Reveal.prev());
+        document.getElementById('nextBtn').addEventListener('click', () => Reveal.next());
+        document.getElementById('homeBtn').addEventListener('click', () => Reveal.slide(0));
+        document.getElementById('overviewBtn').addEventListener('click', () => Reveal.toggleOverview());
+        document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
+        document.getElementById('helpBtn').addEventListener('click', toggleKeyboardHelp);
+        
+        // 전체화면 변경 이벤트
+        document.addEventListener('fullscreenchange', function() {
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const icon = fullscreenBtn.querySelector('i');
+            if (document.fullscreenElement) {
+                icon.className = 'fas fa-compress';
+            } else {
+                icon.className = 'fas fa-expand';
+            }
+        });
+        
+        // 키보드 이벤트
+        document.addEventListener('keydown', function(event) {
+            // 도움말 자동 숨기기
+            if (helpVisible && event.key !== 'h' && event.key !== 'H') {
+                setTimeout(() => {
+                    if (helpVisible) {
+                        toggleKeyboardHelp();
+                    }
+                }, 3000);
+            }
+        });
+        
+        // 마우스 이동 시 네비게이션 표시
+        let mouseTimer;
+        document.addEventListener('mousemove', function() {
+            const navigation = document.querySelector('.slide-navigation');
+            const slideInfo = document.querySelector('.slide-info');
+            navigation.style.opacity = '1';
+            slideInfo.style.opacity = '1';
+            
+            clearTimeout(mouseTimer);
+            mouseTimer = setTimeout(() => {
+                navigation.style.opacity = '0.7';
+                slideInfo.style.opacity = '0.7';
+            }, 3000);
+        });
+        
+        // 초기 마우스 이벤트 트리거
+        document.dispatchEvent(new Event('mousemove'));
+        
+        // 성능 최적화
+        window.addEventListener('beforeunload', function() {
+            saveProgress();
+        });
+        
+        // 페이지 가시성 변경 시 애니메이션 일시정지
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // 페이지가 숨겨졌을 때 애니메이션 일시정지
+                if (typeof animationManager !== 'undefined') {
+                    // 애니메이션 일시정지 로직
+                }
+            } else {
+                // 페이지가 다시 보일 때 애니메이션 재시작
+                if (typeof animationManager !== 'undefined') {
+                    // 애니메이션 재시작 로직
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

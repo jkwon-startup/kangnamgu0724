@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}강의 목록 - 슬라이드 강의안 플랫폼{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-list"></i>
+                    강의 목록
+                </h1>
+                <a href="#" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    새 강의 만들기
+                </a>
+            </div>
+            
+            {% if slides %}
+            <div class="row g-4">
+                {% for slide in slides %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm hover-card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-presentation text-primary"></i>
+                                {{ slide.title }}
+                            </h5>
+                            <p class="card-text text-muted">
+                                {{ slide.description or '설명이 없습니다.' }}
+                            </p>
+                            
+                            <div class="d-flex flex-wrap gap-1 mb-3">
+                                {% for tag in slide.tags %}
+                                <span class="badge bg-secondary">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <div class="card-footer-info">
+                                {% if slide.author %}
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i>
+                                    {{ slide.author }}
+                                </small>
+                                {% endif %}
+                                {% if slide.created_at %}
+                                <small class="text-muted ms-2">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ slide.created_at }}
+                                </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('view_slide', slide_id=slide.id) }}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-play"></i>
+                                    강의 시작
+                                </a>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-folder-open fa-5x text-muted mb-4"></i>
+                <h3 class="text-muted">강의가 없습니다</h3>
+                <p class="lead text-muted mb-4">
+                    첫 번째 강의를 만들어보세요!
+                </p>
+                <a href="#" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus"></i>
+                    새 강의 만들기
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 카드 호버 효과
+    document.querySelectorAll('.hover-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+</script>
+{% endblock %} 
